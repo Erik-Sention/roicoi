@@ -1,0 +1,1 @@
+cd roicoi-app && npm run dev

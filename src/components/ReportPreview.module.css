@@ -1,0 +1,71 @@
+/* Report container */
+.reportContainer {
+  background-color: #F0EEEC;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+/* Warning alert */
+.warningAlert {
+  background-color: #FFF8E6;
+  border-color: #F9D575;
+}
+
+.warningIcon {
+  color: #D97706;
+}
+
+/* Text colors */
+.titleText {
+  color: #2D3748;
+}
+
+.bodyText {
+  color: #4A5568;
+}
+
+/* Summary section */
+.summarySection {
+  background-color: #E2E0DE;
+}
+
+/* Tables */
+.tableContainer {
+  border-color: #D1CFC9;
+}
+
+.tableHeader {
+  background-color: #E2E0DE;
+}
+
+.tableHeaderCell {
+  border-color: #D1CFC9;
+  color: #2D3748;
+}
+
+.tableCell {
+  border-color: #D1CFC9;
+  color: #4A5568;
+}
+
+.tableRow {
+  background-color: #FFFFFF;
+}
+
+.tableRowAlt {
+  background-color: #F8F8F8;
+}
+
+.tableSummaryRow {
+  background-color: #E2E0DE;
+}
+
+.tableSummaryCell {
+  color: #2D3748;
+}
+
+/* Download button */
+.downloadButton {
+  background-color: #4A5568;
+  color: white;
+} 
