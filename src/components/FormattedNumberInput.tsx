@@ -10,6 +10,8 @@ interface FormattedNumberInputProps extends Omit<React.InputHTMLAttributes<HTMLI
   formatOnBlur?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 /**
@@ -27,7 +29,9 @@ export function FormattedNumberInput({
   formatOnBlur = true,
   disabled = false,
   readOnly = false,
-  ...props
+  onFocus,
+  onBlur,
+  ...restProps
 }: FormattedNumberInputProps) {
   // State to track if the input is being edited
   const [isEditing, setIsEditing] = useState(false);
@@ -52,10 +56,10 @@ export function FormattedNumberInput({
     }
     
     // Call the original onFocus handler if provided
-    if (props.onFocus) {
-      props.onFocus(e);
+    if (onFocus) {
+      onFocus(e);
     }
-  }, [value, props.onFocus]);
+  }, [value, onFocus]);
 
   // Handle blur event
   const handleBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
@@ -67,10 +71,10 @@ export function FormattedNumberInput({
     }
     
     // Call the original onBlur handler if provided
-    if (props.onBlur) {
-      props.onBlur(e);
+    if (onBlur) {
+      onBlur(e);
     }
-  }, [formatOnBlur, props.onBlur]);
+  }, [formatOnBlur, onBlur]);
 
   // Handle change event
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,7 +96,7 @@ export function FormattedNumberInput({
 
   return (
     <Input
-      {...props}
+      {...restProps}
       type="text"
       value={displayValue}
       onChange={handleChange}
