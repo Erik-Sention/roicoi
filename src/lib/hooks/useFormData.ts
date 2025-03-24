@@ -8,7 +8,6 @@ import {
   updateFormData, 
   getFormByFormId, 
   getFormById,
-  setupFormListener,
   clearFormDataCache
 } from '../firebase/formSubmission';
 import { retryWithBackoff } from '../utils/safeDataHandling';
@@ -250,13 +249,17 @@ export function useFormData({
   
   // Clean up on unmount
   useEffect(() => {
+    // Copy ref values to local variables
+    const unsubscribe = unsubscribeRef.current;
+    const autoSaveTimer = autoSaveTimerRef.current;
+
     return () => {
-      if (autoSaveTimerRef.current) {
-        clearTimeout(autoSaveTimerRef.current);
+      if (autoSaveTimer) {
+        clearTimeout(autoSaveTimer);
       }
       
-      if (unsubscribeRef.current) {
-        unsubscribeRef.current();
+      if (unsubscribe) {
+        unsubscribe();
       }
     };
   }, []);

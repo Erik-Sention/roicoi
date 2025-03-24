@@ -47,7 +47,7 @@ export default function FormA() {
     if (!isLoading && sharedData.organizationName && formData['A1'] !== sharedData.organizationName) {
       updateField('A1', sharedData.organizationName);
     }
-  }, [isLoading, sharedData.organizationName]);
+  }, [isLoading, sharedData.organizationName, formData, updateField]);
   
   const handleInputChange = useCallback((field: string, value: string | number) => {
     // Update the form data
