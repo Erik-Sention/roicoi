@@ -23,21 +23,7 @@ export default function FormA() {
     hasUnsavedChanges
   } = useFormData({
     formId: 'form-a',
-    initialData: {
-      // Default values from the image
-      A1: 'Demo Alltjänst AB',
-      A2: 'Anna Andersson',
-      A3: 'Hela företaget, samtliga anställda (1500)på samtliga (5) orter',
-      A4_description: '18 personer långtidssjukskrivna pga psykisk ohälsa, ökat senaste 3 åren. Ökande kortare sjukfrånvaro som bedöms bero på psykisk ohälsa. Enligt senaste 2 medarbetarundersökningarna har andelen med stressrelaterad psykisk ohälsa ökat. I vissa verksamheter ökar antalet rapporterade avvikelser vilket kan ha med stress att göra. Bedömning är att vi inte lever upp till kraven i AFS 2015:4.',
-      A4_stress_percentage: '22',
-      A4_production_loss: '19935000',
-      A4_sick_leave_cost: '2277000',
-      A5: 'Låg grad av egenkontroll, brister i schemaläggningen, stressade chefer, låg kunskap hos chefer och medarbetare om psykisk ohälsa. Ledningen har inte haft personalfokus utan bara verksamhetsfokus. Orsakar troligtvis produktionsbortfall. Risk för ökad sjukfrånvaro om inget görs.',
-      A6: 'Mål: Minskad sjukfrånvaro till 4% och minskning av andelen som upplever hög stressnivå till 18%. Behov: Tydligare fokus på personalens hälsa och arbetsförhållanden, från ledning och nedåt. Bättre kunskap hos såväl ledning, chefer som medarbetare om vår organisatoriska och sociala arbetsmiljö. Bättre processer för att fånga upp tidiga signaler och sätta in insatser i tid.',
-      A7: '1. Kartläggning av psykisk ohälsa och arbetsmiljö. Syfte: Att identifiera orsaker.\n2. Utbildning + projekt för ledningsgruppen; kunskap, mål, prioriteringar, metod, ekonomi - baseras på screening. Syfte: Bättre kunskap och förankring för frågorna.\n3. Utbildning chefer baserad på screening + handlingsplan. Syfte: Ge dem kunskap och verktyg att arbeta med OSA.\n4. Utbildning och survey-feedback med personal + handlingsplan. Syfte: Identifiera orsaker och skapa handlingsplan med åtgärder.',
-      A8: 'Se detaljredovisning på formulär C-J',
-      A9: 'Det föreslagna paketet med insatser kräver att andelen med hög stressnivå minskar med minst 9% vilket motsvarar en sänkning från 22% till ca 20% för att insatsen ska gå ihop sig. Allt över det är en besparing. Givet att organisationens anställda avsätter den tid som krävs bedöms minsta effekt rimlig att uppnå. Insatspaketet rekommenderas.'
-    },
+    initialData: {},
     autoSaveInterval: 30000, // Auto-save after 30 seconds of inactivity
     onSaveSuccess: () => {
       toast({
