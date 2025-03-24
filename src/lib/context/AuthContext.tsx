@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, UserCredential } from 'firebase/auth';
+import { User, UserCredential, AuthError } from 'firebase/auth';
 import { 
   onAuthChange, 
   signIn, 
@@ -45,9 +45,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (result) {
           console.log("Signed in via redirect:", result.user);
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error getting redirect result:", error);
-        setError(error.message || "Ett fel uppstod vid inloggning med Google");
+        if (error instanceof Error) {
+          setError(error.message || "Ett fel uppstod vid inloggning med Google");
+        }
       }
     };
 
@@ -56,12 +58,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribe();
   }, []);
 
-  const handleAuthError = (error: any) => {
+  const handleAuthError = (error: unknown) => {
     console.error("Auth error:", error);
     let errorMessage = "Ett oväntat fel uppstod";
     
-    if (error.code) {
-      switch (error.code) {
+    if (error instanceof Error && 'code' in error) {
+      const authError = error as AuthError;
+      switch (authError.code) {
         case 'auth/network-request-failed':
           errorMessage = "Nätverksfel. Kontrollera din internetanslutning";
           break;
@@ -86,7 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const result = await signUp(email, password);
       if (!result) throw new Error("Registrering misslyckades");
       return result;
-    } catch (error: any) {
+    } catch (error: unknown) {
       handleAuthError(error);
       throw error;
     }
@@ -98,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const result = await signIn(email, password);
       if (!result) throw new Error("Inloggning misslyckades");
       return result;
-    } catch (error: any) {
+    } catch (error: unknown) {
       handleAuthError(error);
       throw error;
     }
@@ -110,7 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const result = await signInWithGoogle();
       if (!result) throw new Error("Google-inloggning misslyckades");
       return result;
-    } catch (error: any) {
+    } catch (error: unknown) {
       handleAuthError(error);
       throw error;
     }
