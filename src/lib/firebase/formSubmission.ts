@@ -5,8 +5,8 @@ import { retryWithBackoff } from '../utils/safeDataHandling';
 
 // Define types for form data
 interface FormData {
-  id?: string;
-  formId?: string;
+  id: string;  // Make id required
+  formId: string;  // Make formId required
   data: Record<string, unknown>;
   createdAt?: string;
   updatedAt?: string;
@@ -45,7 +45,8 @@ export const saveFormData = async (formId: string, formData: Record<string, unkn
     // Save the form data with timestamps using retry logic
     console.log(`[saveFormData] Setting data in Realtime DB...`);
     
-    const dataToSave = {
+    const dataToSave: FormData = {
+      id: formUniqueId,
       formId,
       data: formData,
       createdAt: new Date().toISOString(),
@@ -100,14 +101,19 @@ export const updateFormData = async (formDocId: string, formData: Record<string,
     // Update the form data with a new timestamp
     console.log(`[updateFormData] Updating data in Realtime DB...`);
     
-    const dataToUpdate = {
+    const existingData = formDataCache.get(formDocId);
+    if (!existingData) {
+      throw new Error('Form not found in cache');
+    }
+
+    const dataToUpdate: FormData = {
+      ...existingData,
       data: formData,
       updatedAt: new Date().toISOString(),
     };
     
     // Update the cache
-    const existingData = formDataCache.get(formDocId) || {};
-    formDataCache.set(formDocId, { ...existingData, ...dataToUpdate });
+    formDataCache.set(formDocId, dataToUpdate);
     
     await retryWithBackoff(async () => {
       await update(formRef, dataToUpdate);
@@ -143,7 +149,13 @@ export const saveToRealtimeDB = async (formId: string, formData: Record<string, 
     // Save the data with timestamps
     console.log(`[saveToRealtimeDB] Setting data in Realtime DB...`);
     
-    const dataToSave = {
+    const existingData = formDataCache.get(formId);
+    if (!existingData) {
+      throw new Error('Form not found in cache');
+    }
+
+    const dataToSave: FormData = {
+      ...existingData,
       data: formData,
       updatedAt: new Date().toISOString(),
     };
@@ -260,7 +272,7 @@ export const saveProject = async (projectId: string, projectData: Record<string,
  * @param formId - The ID of the form to get (e.g., 'form-a')
  * @returns Promise with the form data or null if not found
  */
-export const getFormByFormId = async (formId: string) => {
+export const getFormByFormId = async (formId: string): Promise<FormData | null> => {
   try {
     console.log(`[getFormByFormId] Getting form ${formId}`);
     const auth = getAuth();
@@ -288,19 +300,30 @@ export const getFormByFormId = async (formId: string) => {
     
     // Find the form with the matching formId
     let matchingForm: FormData | null = null;
-    snapshot.forEach((childSnapshot) => {
-      const key = childSnapshot.key;
-      const val = childSnapshot.val();
-      if (key && val.formId === formId) {
-        matchingForm = {
-          id: key,
-          ...val,
-        } as FormData;
-        // Update cache
-        formDataCache.set(key, matchingForm);
-        return true; // Break the forEach loop
+    
+    // Check cache first
+    const cacheKey = `form_${formId}`;
+    const cachedForm = formDataCache.get(cacheKey);
+    
+    if (cachedForm) {
+      console.log(`[getFormByFormId] Found form in cache with ID: ${cachedForm.id}`);
+      return cachedForm;
+    }
+    
+    // If not in cache, search in the forms
+    const formsData = snapshot.val() as Record<string, Omit<FormData, 'id'>> | null;
+    if (formsData) {
+      for (const [key, value] of Object.entries(formsData)) {
+        if (value.formId === formId) {
+          matchingForm = {
+            ...value,
+            id: key
+          };
+          formDataCache.set(cacheKey, matchingForm);
+          break;
+        }
       }
-    });
+    }
     
     if (matchingForm) {
       console.log(`[getFormByFormId] Found form with ID: ${matchingForm.id}`);
