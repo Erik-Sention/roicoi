@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormCard } from "@/components/ui/form-card";
-import { FormEvent, useCallback } from "react";
+import { FormEvent, useCallback, useEffect } from "react";
 import { useFormData } from "@/lib/hooks/useFormData";
 import { useSharedForm } from "@/lib/context/SharedFormContext";
 import FormWrapper from "@/components/FormWrapper";
@@ -39,6 +39,13 @@ export default function FormB() {
   });
   
   const { sharedData, updateSharedData } = useSharedForm();
+  
+  // Sync organization name with sharedData
+  useEffect(() => {
+    if (!isLoading && sharedData.organizationName && formData['B1'] !== sharedData.organizationName) {
+      updateField('B1', sharedData.organizationName);
+    }
+  }, [isLoading, sharedData.organizationName]);
   
   const handleInputChange = useCallback((field: string, value: string | number) => {
     // Update the form data

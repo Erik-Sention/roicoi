@@ -16,6 +16,13 @@ interface FormData {
 const formDataCache = new Map<string, FormData>();
 
 /**
+ * Clears the form data cache
+ */
+export const clearFormDataCache = () => {
+  formDataCache.clear();
+};
+
+/**
  * Saves form data to Firebase Realtime Database with retry logic
  * @param formId - The ID of the form (e.g., 'form-a', 'form-b')
  * @param formData - The form data to save

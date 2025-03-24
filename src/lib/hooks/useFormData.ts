@@ -8,7 +8,8 @@ import {
   updateFormData, 
   getFormByFormId, 
   getFormById,
-  setupFormListener
+  setupFormListener,
+  clearFormDataCache
 } from '../firebase/formSubmission';
 import { retryWithBackoff } from '../utils/safeDataHandling';
 
@@ -135,7 +136,7 @@ export function useFormData({
   
   // Load form data when component mounts
   useEffect(() => {
-    if (!user || dataFetchedRef.current) return;
+    if (!user) return;
     
     const loadFormData = async () => {
       setIsLoading(true);
@@ -143,6 +144,9 @@ export function useFormData({
       
       try {
         let loadedData: FormResponse | null = null;
+        
+        // Clear the cache to force a fresh fetch
+        clearFormDataCache();
         
         // If we have a formDocId, use it to fetch the specific form
         if (formDocIdRef.current) {
@@ -185,20 +189,9 @@ export function useFormData({
         console.error('Error loading form data:', err);
         setError(err instanceof Error ? err : new Error('Failed to load form data'));
         
-        if (onLoadError && err instanceof Error) {
-          onLoadError(err);
+        if (onLoadError) {
+          onLoadError(err instanceof Error ? err : new Error('Failed to load form data'));
         }
-        
-        // Use initial data as fallback
-        setFormData(initialData);
-        setOriginalData(initialData);
-        
-        // Show error toast
-        toast({
-          title: 'Error loading form data',
-          description: err instanceof Error ? err.message : 'An unknown error occurred',
-          variant: 'destructive',
-        });
       } finally {
         setIsLoading(false);
       }
@@ -206,35 +199,11 @@ export function useFormData({
     
     loadFormData();
     
-    // Set up real-time listener for form updates
-    if (formDocIdRef.current) {
-      unsubscribeRef.current = setupFormListener(formDocIdRef.current, (data) => {
-        if (data && data.data) {
-          // Only update if the data is different from what we have
-          const newData = data.data as FormData;
-          setFormData(prev => {
-            // Don't update if we're in the middle of saving
-            if (isSaving) return prev;
-            
-            // Check if the data is different
-            const isEqual = JSON.stringify(prev) === JSON.stringify(newData);
-            if (!isEqual) {
-              setOriginalData(newData);
-              return newData;
-            }
-            return prev;
-          });
-        }
-      });
-    }
-    
-    // Clean up listener on unmount
+    // Cleanup function to clear cache when component unmounts
     return () => {
-      if (unsubscribeRef.current) {
-        unsubscribeRef.current();
-      }
+      clearFormDataCache();
     };
-  }, [user, formId, initialData, onLoadSuccess, onLoadError, isSaving]);
+  }, [user, formId, formDocId, onLoadSuccess, onLoadError]);
   
   // Update hasUnsavedChanges when formData changes
   useEffect(() => {
@@ -263,10 +232,14 @@ export function useFormData({
   
   // Function to update a single field
   const updateField = useCallback((field: string, value: unknown) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    // Check if the value is actually different before updating
+    setFormData(prev => {
+      if (prev[field] === value) return prev;
+      return {
+        ...prev,
+        [field]: value
+      };
+    });
   }, []);
   
   // Function to reset form to original data

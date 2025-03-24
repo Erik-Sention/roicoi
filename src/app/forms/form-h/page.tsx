@@ -43,6 +43,13 @@ export default function FormH() {
   
   const { sharedData, updateSharedData } = useSharedForm();
   
+  // Sync organization name with sharedData
+  useEffect(() => {
+    if (!isLoading && sharedData.organizationName && formData['H1'] !== sharedData.organizationName) {
+      updateField('H1', sharedData.organizationName);
+    }
+  }, [isLoading, sharedData.organizationName, formData, updateField]);
+  
   // Use ref to track previous calculated values to avoid unnecessary updates
   const prevCalculatedValuesRef = useRef<Record<string, string>>({});
   

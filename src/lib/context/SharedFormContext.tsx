@@ -215,12 +215,14 @@ export function SharedFormProvider({ children }: SharedFormProviderProps) {
               if (formId === 'form-a') updatedData.A1 = value;
               if (formId === 'form-b') updatedData.B1 = value;
               if (formId === 'form-c') updatedData.C1 = value;
-              // Add mappings for other forms as needed
+              if (formId === 'form-g') updatedData.G1 = value;
+              if (formId === 'form-h') updatedData.H1 = value;
+              if (formId === 'form-i') updatedData.I1 = value;
+              if (formId === 'form-j') updatedData.J1 = value;
             } else if (field === 'contactPerson') {
               if (formId === 'form-a') updatedData.A2 = value;
               if (formId === 'form-b') updatedData.B2 = value;
               if (formId === 'form-c') updatedData.C2 = value;
-              // Add mappings for other forms as needed
             } else if (field === 'totalPersonnelCosts') {
               if (formId === 'form-d') updatedData.D9 = value;
               if (formId === 'form-c') updatedData.C4 = value;
@@ -245,12 +247,14 @@ export function SharedFormProvider({ children }: SharedFormProviderProps) {
               if (formId === 'form-a') newFormData.A1 = value;
               if (formId === 'form-b') newFormData.B1 = value;
               if (formId === 'form-c') newFormData.C1 = value;
-              // Add mappings for other forms as needed
+              if (formId === 'form-g') newFormData.G1 = value;
+              if (formId === 'form-h') newFormData.H1 = value;
+              if (formId === 'form-i') newFormData.I1 = value;
+              if (formId === 'form-j') newFormData.J1 = value;
             } else if (field === 'contactPerson') {
               if (formId === 'form-a') newFormData.A2 = value;
               if (formId === 'form-b') newFormData.B2 = value;
               if (formId === 'form-c') newFormData.C2 = value;
-              // Add mappings for other forms as needed
             } else if (field === 'totalPersonnelCosts') {
               if (formId === 'form-d') newFormData.D9 = value;
               if (formId === 'form-c') newFormData.C4 = value;

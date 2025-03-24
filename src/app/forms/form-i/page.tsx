@@ -41,6 +41,13 @@ export default function FormI() {
   
   const { sharedData, updateSharedData } = useSharedForm();
   
+  // Sync organization name with sharedData
+  useEffect(() => {
+    if (!isLoading && sharedData.organizationName && formData['I1'] !== sharedData.organizationName) {
+      updateField('I1', sharedData.organizationName);
+    }
+  }, [isLoading, sharedData.organizationName, formData, updateField]);
+  
   // Refs to track previous calculated values to prevent infinite loops
   const prevI6Ref = useRef<string | null>(null);
   const prevI8Ref = useRef<string | null>(null);

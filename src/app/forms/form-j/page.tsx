@@ -139,6 +139,13 @@ export default function FormJ() {
   
   const { sharedData, updateSharedData } = useSharedForm();
   
+  // Sync organization name with sharedData
+  useEffect(() => {
+    if (!isLoading && sharedData.organizationName && formData['J1'] !== sharedData.organizationName) {
+      updateField('J1', sharedData.organizationName);
+    }
+  }, [isLoading, sharedData.organizationName, formData, updateField]);
+  
   const handleInputChange = useCallback((field: string, value: string | number) => {
     // Update the form data
     updateField(field, value);

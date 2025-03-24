@@ -43,6 +43,13 @@ export default function FormG() {
   
   const { sharedData, updateSharedData } = useSharedForm();
   
+  // Sync organization name with sharedData
+  useEffect(() => {
+    if (!isLoading && sharedData.organizationName && formData['G1'] !== sharedData.organizationName) {
+      updateField('G1', sharedData.organizationName);
+    }
+  }, [isLoading, sharedData.organizationName, formData, updateField]);
+  
   // Use refs to track previous values and avoid unnecessary updates
   const prevCalculatedValuesRef = useRef<Record<string, string>>({});
   

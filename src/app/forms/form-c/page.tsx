@@ -43,6 +43,13 @@ export default function FormC() {
   
   const { sharedData, updateSharedData } = useSharedForm();
   
+  // Sync organization name with sharedData
+  useEffect(() => {
+    if (!isLoading && sharedData.organizationName && formData['C1'] !== sharedData.organizationName) {
+      updateField('C1', sharedData.organizationName);
+    }
+  }, [isLoading, sharedData.organizationName, formData, updateField]);
+  
   // Use a ref to track the previous value of totalPersonnelCosts to prevent infinite loops
   const prevTotalPersonnelCostsRef = useRef<string>('');
   
