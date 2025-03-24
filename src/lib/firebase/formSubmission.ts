@@ -101,9 +101,33 @@ export const updateFormData = async (formDocId: string, formData: Record<string,
     // Update the form data with a new timestamp
     console.log(`[updateFormData] Updating data in Realtime DB...`);
     
-    const existingData = formDataCache.get(formDocId);
+    let existingData: FormData | null = formDataCache.get(formDocId) || null;
+    
+    // If not in cache, try to fetch from Firebase
     if (!existingData) {
-      throw new Error('Form not found in cache');
+      console.log(`[updateFormData] Form not found in cache, fetching from Firebase...`);
+      const snapshot = await get(formRef);
+      if (snapshot.exists()) {
+        const snapshotData = snapshot.val();
+        existingData = {
+          id: formDocId,
+          formId: snapshotData.formId || formDocId.split('_')[0],
+          data: snapshotData.data || {},
+          createdAt: snapshotData.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        // Update cache with fetched data
+        formDataCache.set(formDocId, existingData);
+      } else {
+        // If the form doesn't exist in Firebase either, create a new one
+        existingData = {
+          id: formDocId,
+          formId: formDocId.split('_')[0], // Extract base formId from the unique ID
+          data: {},
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+      }
     }
 
     const dataToUpdate: FormData = {
